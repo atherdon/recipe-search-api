@@ -78,6 +78,7 @@ const create_with_relations = (options, datazzzz, wrapper, cb) => {
 
 };
 
+
 const create = (options, wrapper, cb ) => {
 
   if ( !options ){ raven.captureException('Options was not specified');  }
@@ -226,6 +227,7 @@ const is_imported = (results, tables) => {
 module.exports = {
   da_id    : da_id,
   create   : create,
+  cReate:cReate,
   attach   : attach,
   get_data : get_imported_data_for_relate_function,
   create_with_relations: create_with_relations,

@@ -1,29 +1,27 @@
-const path    = require('path');
-const async   = require('async');
-const raven   = require('raven');
-const _       = require('underscore');
+const path     = require('path');
+const async    = require('async');
+const raven    = require('raven');
+const _        = require('underscore');
 
 raven.config('https://c1e3b55e6a1a4723b9cae2eb9ce56f2e:57e853a74f0e4db98e69a9cf034edcdd@sentry.io/265540').install();
 // console.log(raven)
 
-let server     = require(path.resolve(__dirname, '../server/server'));
+let server      = require(path.resolve(__dirname, '../server/server'));
 // @TODO update this, cause each time i need to pass a different sources.
-let database   = server.datasources.searchDS;
+let database    = server.datasources.searchDS;
 
 //helper. short name for fast stuff
-let h     = require(path.resolve(__dirname, '003-helper'));
+let h           = require(path.resolve(__dirname, '003-helper'));
 
 // include middleware
 // @todo make it auto-icludable from folder
-let Attributes = require(path.resolve(__dirname, 'attributes'));
+let Attributes  = require(path.resolve(__dirname, 'attributes'));
 
-// let Ingredient   = require(path.resolve(__dirname, 'ingredients'));
-// console.log(  )
+let Departments = require(path.resolve(__dirname, 'departments'));
 
+let Ingredient  = require(path.resolve(__dirname, 'ingredients'));
 
-let Departments  = require(path.resolve(__dirname, 'departments'));
-
-
+let Recipe      = require(path.resolve(__dirname, 'recipes'));
 
 // console.log(options.raven)
 // departments : async.apply(helper.create, options, Departments),
@@ -47,17 +45,23 @@ let options = {
 
 
 async.parallel({
+
+	recipes     : async.apply(h.create, options, Recipe),
 	departments : async.apply(h.create, options, Departments),
 	attributes  : async.apply(h.create, options, Attributes)
 
 
 }, function(err, results){
 
-	h.is_imported(results, ['departments', 'attributes']);
+	h.is_imported(results, ['departments', 'attributes', 'recipes']);
 
 	// console.log(results.departments)
 
 	const department_ids = h.da_id( results.departments );
+
+
+	let ingredients = await h.cReate(options, Ingredients)
+
 
 
 });
